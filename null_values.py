@@ -33,11 +33,14 @@ def classify(df):
     numeric_cols = [item[0] for item in df.dtypes if item[1] != 'string']
     return non_numeric_cols, numeric_cols
 
-def null_values(df):
-    df = dropNullValueColumns(df, 0.1)
-    non_numeric_cols, numeric_cols = classify(df)
-    df1 = replace_numeric_nulls(df, numeric_cols)
-    df2 = replace_non_numeric_nulls(df, non_numeric_cols)
-    null_dict_2 = {col:df2.filter(df2[col].isNull()).count()/df2.count() for col in df2.columns}
-    print(null_dict_2)
-    return df2
+if __name__ == '__main__':
+    file_name = "Citywide_Payroll_Data__Fiscal_Year_.csv"
+    df = spark.read.format("csv").options(header="true", inferschema="true").load(file_name)
+    df.createOrReplaceTempView("df")
+    df1 = dropNullValueColumns(df, 0.1)
+    non_numeric_cols, numeric_cols = classify(df1)
+    df2 = replace_numeric_nulls(df1, numeric_cols)
+    df3 = replace_non_numeric_nulls(df2, non_numeric_cols)
+    null_dict = {col:df3.filter(df3[col].isNull()).count()/df3.count() for col in df3.columns}
+    print(null_dict)
+    return df3
