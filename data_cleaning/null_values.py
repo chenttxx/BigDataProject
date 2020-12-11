@@ -43,4 +43,3 @@ if __name__ == '__main__':
     df3 = replace_non_numeric_nulls(df2, non_numeric_cols)
     null_dict = {col:df3.filter(df3[col].isNull()).count()/df3.count() for col in df3.columns}
     print(null_dict)
-    return df3
